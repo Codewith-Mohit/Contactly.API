@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  namespace: contactly
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      nodeSelector:
+        node-role: frontend
+      containers:
+      - name: frontend
+        image: mt1mngnw/contactly-frontend:v2
+        ports:
+        - containerPort: 80
