@@ -29,7 +29,7 @@ export class AppComponent {
  
 
   onDelete(id : string) {
-this.http.delete(`http://localhost:5029/api/Contacts/${id}`)
+this.http.delete(`http://localhost:31353/api/Contacts/${id}`)
 .subscribe({ 
    next : (value) => {
      alert('Item deleted');
@@ -51,7 +51,7 @@ this.http.delete(`http://localhost:5029/api/Contacts/${id}`)
       favorite : this.contactsForm.value.favorite
     }
 
-    this.http.post('http://localhost:5029/api/Contacts', addContactRequest)  //obersable call
+    this.http.post('http://localhost:31353/api/Contacts', addContactRequest)  //obersable call
     .subscribe({ 
       next : (value) => {
         console.log(value);
@@ -62,6 +62,6 @@ this.http.delete(`http://localhost:5029/api/Contacts/${id}`)
   }
 
   private getContacts() : Observable<Contact[]> {
-    return this.http.get<Contact[]>('http://localhost:5029/api/Contacts');
+    return this.http.get<Contact[]>('http://localhost:31353/api/Contacts');
   }
 }
