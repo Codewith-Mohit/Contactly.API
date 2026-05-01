@@ -1,3 +1,4 @@
 export const environment = {
-  apiUrl: "http://backend-service"
+  production: true,
+  apiUrl: "http://localhost:31353/api/Contacts"
 };

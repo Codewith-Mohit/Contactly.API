@@ -14,9 +14,10 @@ spec:
         app: frontend
     spec:
       nodeSelector:
-        node-role: frontend
+        node-role-frontend: "true"
       containers:
       - name: frontend
-        image: mt1mngnw/contactly-frontend:v2
+        image: mt1mngnw/contactly-frontend:v13
+        imagePullPolicy: Always
         ports:
         - containerPort: 80

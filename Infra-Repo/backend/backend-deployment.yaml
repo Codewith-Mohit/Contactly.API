@@ -14,7 +14,7 @@ spec:
         app: backend
     spec:
       nodeSelector:
-        node-role: backend
+        node-role-backend: "true"
       containers:
       - name: backend
         image: mt1mngnw/contactly-backend:v1

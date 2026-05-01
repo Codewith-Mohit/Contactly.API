@@ -5,18 +5,17 @@ WORKDIR /app
 # Install dependencies
 COPY package.json package-lock.json ./
 RUN npm ci --production=false
-
+RUN npm install
 # Copy the application source and build it
 COPY . .
 RUN npm run build -- --configuration production
 
+# remove default nginx website
+RUN rm -rf /usr/share/nginx/html/*
+
 # Stage 2: serve with nginx
 FROM nginx:stable-alpine AS runtime
-COPY --from=build /app/dist/contactly.web /usr/share/nginx/html
-
-# Remove default nginx config and add a simple fallback for SPA routing
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist/contactly.web/browser/* /usr/share/nginx/html/
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
