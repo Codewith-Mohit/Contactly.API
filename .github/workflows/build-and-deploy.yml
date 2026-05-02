@@ -63,15 +63,15 @@ jobs:
     - name: Checkout Infra Repo
       uses: actions/checkout@v4
       with:
-        repository: Codewith-Mohit/Contactly-Infra
+        repository: Codewith-Mohit/contactly-infra
         token: ${{ secrets.INFRA_REPO_TOKEN }}
-        path: infra
+        path: infra-repo
 
     # Update image tags in k8s yaml
     - name: Update Kubernetes manifests
       run: |
-        sed -i "s|contactly-backend:.*|contactly-backend:$IMAGE_TAG|g" infra/Infra-repo/backend/deployment.yaml
-        sed -i "s|contactly-frontend:.*|contactly-frontend:$IMAGE_TAG|g" infra/Infra-repo/frontend/deployment.yaml
+        sed -i "s|contactly-backend:.*|contactly-backend:$IMAGE_TAG|g" /backend/deployment.yaml
+        sed -i "s|contactly-frontend:.*|contactly-frontend:$IMAGE_TAG|g" /frontend/deployment.yaml
 
     # 📤 Push changes to Infra repo
     - name: Commit & Push Infra Changes
