@@ -67,7 +67,7 @@ jobs:
         token: ${{ secrets.INFRA_REPO_TOKEN }}
         path: infra-repo
 
-    # Update image tags in k8s yaml
+    # Update image tags in k8s yaml 
     - name: Update Kubernetes manifests
       run: |
         sed -i "s|image: mt1mngnw/contactly-backend:.*|image: mt1mngnw/contactly-backend:$IMAGE_TAG|g" infra-repo/infra-repo/backend/deployment.yaml
