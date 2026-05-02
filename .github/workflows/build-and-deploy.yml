@@ -1,0 +1,84 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Contactly/**'
+      - 'Contactly.Web/**'
+  
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'Contactly/**'
+            frontend:
+              - 'Contactly.Web/**'
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout App Repo
+      uses: actions/checkout@v4
+
+    # Login DockerHub
+    - name: Login DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # Generate image tag = commit SHA
+    - name: Set Image Tag
+      run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+    # Build Backend Image
+    - name: Build Backend Image
+      run: |
+        docker build -t mt1mngnw/contactly-backend:$IMAGE_TAG ./Contactly
+
+    - name: Push Backend Image
+      run: docker push mt1mngnw/contactly-backend:$IMAGE_TAG
+
+    # Build Frontend Image
+    - name: Build Frontend Image
+      run: |
+        docker build -t mt1mngnw/contactly-frontend:$IMAGE_TAG ./Contactly.Web
+
+    - name: Push Frontend Image
+      run: docker push mt1mngnw/contactly-frontend:$IMAGE_TAG
+
+    # Checkout Infra Repo
+    - name: Checkout Infra Repo
+      uses: actions/checkout@v4
+      with:
+        repository: Codewith-Mohit/Contactly-Infra
+        token: ${{ secrets.INFRA_REPO_TOKEN }}
+        path: infra
+
+    # Update image tags in k8s yaml
+    - name: Update Kubernetes manifests
+      run: |
+        sed -i "s|contactly-backend:.*|contactly-backend:$IMAGE_TAG|g" infra-repo/backend/deployment.yaml
+        sed -i "s|contactly-frontend:.*|contactly-frontend:$IMAGE_TAG|g" infra-repo/frontend/deployment.yaml
+
+    # 📤 Push changes to Infra repo
+    - name: Commit & Push Infra Changes
+      run: |
+        cd infra
+        git config user.name "github-actions"
+        git config user.email "actions@github.com"
+        git add .
+        git commit -m "Update image to $IMAGE_TAG"
+        git push
