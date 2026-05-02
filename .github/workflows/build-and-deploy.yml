@@ -70,8 +70,8 @@ jobs:
     # Update image tags in k8s yaml
     - name: Update Kubernetes manifests
       run: |
-        sed -i "s|contactly-backend:.*|contactly-backend:$IMAGE_TAG|g" infra/infra-repo/backend/deployment.yaml
-        sed -i "s|contactly-frontend:.*|contactly-frontend:$IMAGE_TAG|g" infra/infra-repo/frontend/deployment.yaml
+        sed -i "s|contactly-backend:.*|contactly-backend:$IMAGE_TAG|g" infra/Infra-repo/backend/deployment.yaml
+        sed -i "s|contactly-frontend:.*|contactly-frontend:$IMAGE_TAG|g" infra/Infra-repo/frontend/deployment.yaml
 
     # 📤 Push changes to Infra repo
     - name: Commit & Push Infra Changes
