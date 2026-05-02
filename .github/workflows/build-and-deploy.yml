@@ -46,7 +46,7 @@ jobs:
     # Build Backend Image
     - name: Build Backend Image
       run: |
-        docker build -t mt1mngnw/contactly-backend:$IMAGE_TAG ./Contactly
+        docker build -t mt1mngnw/contactly-backend:$IMAGE_TAG ./Contactly/Contactly
 
     - name: Push Backend Image
       run: docker push mt1mngnw/contactly-backend:$IMAGE_TAG
