@@ -76,7 +76,7 @@ jobs:
     # 📤 Push changes to Infra repo
     - name: Commit & Push Infra Changes
       run: |
-        cd infra
+        cd infra-repo
         git config user.name "github-actions"
         git config user.email "actions@github.com"
         git add .
