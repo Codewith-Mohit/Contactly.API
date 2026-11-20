@@ -17,6 +17,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 
 export class AppComponent {
   http = inject(HttpClient);
+  selectedContactId: string | null = null;
 
   contactsForm = new FormGroup({
     name : new FormControl<string>(''),
@@ -29,7 +30,7 @@ export class AppComponent {
  
 
   onDelete(id : string) {
-this.http.delete(`http://localhost:31353/api/Contacts/${id}`)
+this.http.delete(`https://localhost:7103/api/Contacts/${id}`)
 .subscribe({ 
    next : (value) => {
      alert('Item deleted');
@@ -42,6 +43,46 @@ this.http.delete(`http://localhost:31353/api/Contacts/${id}`)
 })
   }
 
+  onSelectContact(contact: Contact) {
+    alert(contact.id);
+    this.selectedContactId = contact.id;
+    this.contactsForm.patchValue({
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone,
+      favorite: contact.favorite
+    });
+  }
+
+  onUpdate() {
+
+    if (!this.selectedContactId) {
+      alert(this.selectedContactId);
+      return;
+    }
+    const updateContactRequest = {
+      contactId: this.selectedContactId,
+      name: this.contactsForm.value.name,
+      email: this.contactsForm.value.email,
+      phone: this.contactsForm.value.phone,
+      favorite: this.contactsForm.value.favorite
+    };
+    alert(updateContactRequest.contactId);
+    this.http.patch(`https://localhost:7103/api/Contacts`, updateContactRequest)
+      .subscribe({
+        next: () => {
+          alert('Item updated');
+          this.contact$ = this.getContacts();
+          this.contactsForm.reset();
+          this.selectedContactId = null;
+        },
+        error: (err) => {
+          alert(err);
+          console.error('Update failed', err);
+          alert('Failed to update item');
+        }
+      });
+  }
 
   onFormSubmit (){
     const addContactRequest = {      
@@ -51,17 +92,18 @@ this.http.delete(`http://localhost:31353/api/Contacts/${id}`)
       favorite : this.contactsForm.value.favorite
     }
 
-    this.http.post('http://localhost:31353/api/Contacts', addContactRequest)  //obersable call
+    this.http.post('https://localhost:7103/api/Contacts', addContactRequest)  //obersable call
     .subscribe({ 
       next : (value) => {
         console.log(value);
         this.contact$ = this.getContacts();
         this.contactsForm.reset();
+        this.selectedContactId = null;
       }
     });
   }
 
   private getContacts() : Observable<Contact[]> {
-    return this.http.get<Contact[]>('http://localhost:31353/api/Contacts');
+    return this.http.get<Contact[]>('https://localhost:7103/api/Contacts');
   }
 }
